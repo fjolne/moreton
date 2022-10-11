@@ -73,6 +73,7 @@ flutter:
           weight: 300
         - asset: fonts/Inter-LightItalic.otf
         - asset: fonts/Inter-Medium.otf
+          weight: 500
         - asset: fonts/Inter-MediumItalic.otf
         - asset: fonts/Inter-Regular.otf
           weight: 400

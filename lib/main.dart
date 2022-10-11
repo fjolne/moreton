@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 void main() {
   runApp(const MyApp());
@@ -15,35 +16,27 @@ class MyApp extends StatelessWidget {
       title: 'Tonswap',
       theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(
-              brightness: Brightness.dark,
-              seedColor: const Color(0xff2196F3),
-              primary: const Color(0xff478ee0)),
+            brightness: Brightness.dark,
+            seedColor: const Color(0xff478ee0),
+            primary: const Color(0xff478ee0),
+            onPrimary: const Color(0xffeeeeee),
+            surface: const Color(0xff1c1c1c),
+            background: const Color(0xff050505),
+          ),
           fontFamily: 'Inter',
-          textTheme: const TextTheme(
-            headline1: TextStyle(fontSize: 72.0, fontWeight: FontWeight.bold),
-            headline6: TextStyle(fontSize: 36.0, fontStyle: FontStyle.italic),
-            bodyText1: TextStyle(fontSize: 12.0),
-            bodyText2: TextStyle(fontSize: 10.0),
+          textTheme: Typography.englishLike2021,
+          appBarTheme: const AppBarTheme(
+            systemOverlayStyle: SystemUiOverlayStyle(
+              statusBarColor: Color(0xff1c1c1c),
+              systemNavigationBarColor: Color(0xff1c1c1c),
+            ),
           ),
           bottomNavigationBarTheme: const BottomNavigationBarThemeData(
             selectedItemColor: Color(0xff478EE0),
           )),
-      home: const MyHomePage(title: 'Okay'),
+      home: const MyHomePage(title: 'Wallet'),
     );
   }
-}
-
-enum TrustColors {
-  white(value: Color(0xffffffff)),
-  darkWhite(value: Color(0xffcccccc)),
-  blue(value: Color(0xff478EE0)),
-  grey(value: Color(0xff7F8082)),
-  black(value: Color(0xff1C1C1C)),
-  darkBlack(value: Color(0xff050305));
-
-  final Color value;
-
-  const TrustColors({required this.value});
 }
 
 class MyHomePage extends StatefulWidget {
@@ -58,39 +51,39 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
+    var cs = Theme.of(context).colorScheme;
+    var tt = Theme.of(context).textTheme;
     return Scaffold(
       appBar: AppBar(
+        elevation: 0,
         leading: IconButton(
           onPressed: () {},
           icon: const Icon(Icons.notifications_outlined),
-          color: Theme.of(context).colorScheme.primary,
+          color: cs.primary,
         ),
         actions: [
           IconButton(
-              onPressed: () {},
-              color: TrustColors.blue.value,
-              icon: const Icon(Icons.tune))
+              onPressed: () {}, color: cs.primary, icon: const Icon(Icons.tune))
         ],
       ),
       body: Container(
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        color: TrustColors.black.value,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: const <Widget>[
-            Balance(),
-            SizedBox(height: 24),
-            Actions(),
-            SizedBox(height: 24),
-            TokenList(tokens: tokens),
-          ],
+        color: cs.background,
+        child: Container(
+          color: cs.surface,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: const <Widget>[
+              Balance(),
+              SizedBox(height: 24),
+              Actions(),
+              SizedBox(height: 24),
+              TokenList(tokens: tokens),
+            ],
+          ),
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
-        selectedFontSize: 8,
-        unselectedFontSize: 8,
-        iconSize: 16,
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.shield),
@@ -136,18 +129,15 @@ class Balance extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var cs = Theme.of(context).colorScheme;
+    var tt = Theme.of(context).textTheme;
     return Container(
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-      Text("1 816,51 \$",
-          style: TextStyle(color: TrustColors.white.value, fontSize: 24)),
+      Text("1 816,51 \$", style: tt.headlineMedium),
       const SizedBox(
         height: 4,
       ),
-      Text("Main Wallet",
-          style: TextStyle(
-              color: TrustColors.darkWhite.value,
-              fontSize: 10,
-              fontWeight: FontWeight.w300)),
+      Text("Main Wallet", style: tt.bodyMedium?.copyWith(color: cs.secondary)),
     ]));
   }
 }
@@ -200,23 +190,24 @@ class ActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var cs = Theme.of(context).colorScheme;
+    var tt = Theme.of(context).textTheme;
     return Container(
       child: Column(
         children: [
           CircleAvatar(
-              radius: 16,
-              backgroundColor: TrustColors.blue.value,
+              radius: 24,
+              backgroundColor: cs.primary,
               child: IconButton(
-                iconSize: 16,
+                iconSize: 24,
                 icon: icon,
-                color: TrustColors.white.value,
+                color: cs.onPrimary,
                 onPressed: onPressed,
               )),
           const SizedBox(
             height: 4,
           ),
-          Text(text,
-              style: TextStyle(color: TrustColors.white.value, fontSize: 10))
+          Text(text, style: tt.bodySmall)
         ],
       ),
     );
@@ -259,9 +250,11 @@ class TokenList extends StatefulWidget {
 class _TokenListState extends State<TokenList> {
   @override
   Widget build(BuildContext context) {
+    var cs = Theme.of(context).colorScheme;
+    var tt = Theme.of(context).textTheme;
     return Container(
       decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.shadow,
+          color: cs.background,
           borderRadius: const BorderRadius.all(Radius.circular(8))),
       // padding: const EdgeInsets.symmetric(vertical: 8),
       child: Column(
@@ -284,7 +277,7 @@ class _TokenListState extends State<TokenList> {
               ],
             ),
           ),
-        ]).toList(),
+        ]),
       ),
     );
   }
@@ -296,25 +289,25 @@ class Token extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var cs = Theme.of(context).colorScheme;
+    var tt = Theme.of(context).textTheme;
     return ListTile(
-      contentPadding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-      textColor: TrustColors.white.value,
+      contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       leading: ClipRRect(
         borderRadius: BorderRadius.circular(999),
         child: Image(
-            image: AssetImage(data.blockchain.imageUrl), width: 36, height: 36),
+            image: AssetImage(data.blockchain.imageUrl), width: 48, height: 48),
       ),
-      title: Text(data.name, style: const TextStyle(fontSize: 12)),
+      title: Text(data.name, style: tt.titleMedium),
       trailing: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Text(data.formattedValue, style: const TextStyle(fontSize: 12)),
+            Text(data.formattedValue, style: tt.titleMedium),
             const SizedBox(height: 2),
             Text(data.formattedUsdValue,
                 textAlign: TextAlign.end,
-                style: TextStyle(
-                    color: TrustColors.darkWhite.value, fontSize: 10)),
+                style: tt.bodyMedium?.copyWith(color: cs.secondary)),
           ]),
     );
   }
