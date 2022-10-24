@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "tonswap" "\0"
+            VALUE "FileDescription", "moreton" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "tonswap" "\0"
+            VALUE "InternalName", "moreton" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2022 com.example. All rights reserved." "\0"
-            VALUE "OriginalFilename", "tonswap.exe" "\0"
-            VALUE "ProductName", "tonswap" "\0"
+            VALUE "OriginalFilename", "moreton.exe" "\0"
+            VALUE "ProductName", "moreton" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

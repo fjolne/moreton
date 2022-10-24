@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.tonswap">
+    package="com.example.moreton">
    <application
-        android:label="tonswap"
+        android:label="moreton"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

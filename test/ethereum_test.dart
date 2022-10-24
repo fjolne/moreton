@@ -1,8 +1,8 @@
 import 'package:flutter/widgets.dart';
+import 'package:moreton/models/ethereum.dart';
+import 'package:moreton/models/ton.dart';
 import 'package:test/test.dart';
 import 'package:web3dart/web3dart.dart';
-import 'package:tonswap/ethereum.dart';
-import 'package:tonswap/ton.dart';
 
 final EthereumAddress contractAddr = EthereumAddress.fromHex(
   '0x5c901b3Bfb52cD94AE2A4d5c111aA48797a1896C',

@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
     );
     var tt = Typography.englishLike2021;
     return MaterialApp(
-      title: 'Tonswap',
+      title: 'MoreTON',
       theme: ThemeData(
           colorScheme: cs,
           fontFamily: 'Inter',

@@ -1,9 +1,8 @@
-import 'package:http/http.dart';
-import 'package:test/test.dart';
-import 'package:integration_test/integration_test.dart';
 import 'package:flutter_trust_wallet_core/flutter_trust_wallet_core.dart';
+import 'package:integration_test/integration_test.dart';
+import 'package:moreton/models/ethereum.dart';
+import 'package:test/test.dart';
 import 'package:web3dart/web3dart.dart';
-import 'package:tonswap/ethereum.dart';
 
 const mnemonic =
     "want region shallow update slight arrive notable news alert canyon candy art";

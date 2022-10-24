@@ -1,4 +1,4 @@
-package com.example.tonswap
+package com.example.moreton
 
 import io.flutter.embedding.android.FlutterActivity
 
