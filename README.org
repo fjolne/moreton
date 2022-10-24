@@ -1,0 +1,9 @@
+#+title: MoreTON
+
+* Summary
+The purpose of this project is to make the transfer of /Toncoins/ between different blockchains as straightforward as possible.
+
+* Notes
+** /Toncoin/ is a native currency of The Open Network (TON) [[https://ton.org][blockchain]].
+** Cross-chain transfer is done via [[https://github.com/ton-blockchain/TIPs/issues/24#issuecomment-899768466][bridges]].
+** The wallet functionality is provided by [[https://github.com/trustwallet/wallet-core][Wallet Core]] (the core of [[https://trustwallet.com/][Trust Wallet]]).
