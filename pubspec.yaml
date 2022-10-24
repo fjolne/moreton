@@ -32,14 +32,28 @@ dependencies:
   flutter:
     sdk: flutter
 
+  # NOTE we build fork of Trust Wallet Core from source
+  flutter_trust_wallet_core:
+    path: ../flutter_trust_wallet_core_lib_include
+
+  # TODO proper audit
+  web3dart: 2.4.1
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
 
+  shared_preferences: ^2.0.15
+  http: ^0.13.5
+  convert: ^3.1.1
+  path: ^1.8.2
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  integration_test:
+    sdk: flutter
+  test: ^1.14.4
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -56,6 +70,7 @@ flutter:
 
   assets:
     - images/
+    - assets/
 
   fonts:
     - family: Inter

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+
+import '/models/token.dart';
 import 'token.dart';
-import 'global.dart';
+import 'ui.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -54,7 +56,7 @@ class Balance extends StatelessWidget {
     var tt = Theme.of(context).textTheme;
     return Container(
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-      Text("1 816,51 \$", style: tt.headlineMedium),
+      Text("0 \$", style: tt.headlineMedium),
       const SizedBox(
         height: 4,
       ),
@@ -146,35 +148,57 @@ class _TokenListState extends State<TokenList> {
   }
 }
 
-class TokenTile extends StatelessWidget {
+class TokenTile extends StatefulWidget {
   final Token token;
   const TokenTile({super.key, required this.token});
+
+  @override
+  State<TokenTile> createState() => _TokenTileState();
+}
+
+class _TokenTileState extends State<TokenTile> {
+  TokenAmount tokenAmount = "0";
+  FiatAmount fiatAmount = "0";
+
+  @override
+  void initState() {
+    super.initState();
+    getAmounts();
+  }
+
+  void getAmounts() async {
+    var _tokenAmount = await getTokenAmount(widget.token);
+    setState(() {
+      tokenAmount = _tokenAmount;
+      fiatAmount = getFiatAmount(tokenAmount);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     var cs = Theme.of(context).colorScheme;
     var tt = Theme.of(context).textTheme;
-    var tokenAmount = getTokenAmount(token);
-    var fiatAmount = getFiatAmount(tokenAmount);
     return ListTile(
       onTap: () {
-        Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => TokenScreen(token: token)));
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => TokenScreen(token: widget.token)));
       },
       contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       leading: ClipRRect(
         borderRadius: BorderRadius.circular(999),
         child: Image(
-            image: AssetImage(token.blockchain.imageUrl),
+            image: AssetImage(widget.token.blockchain.imageUrl),
             width: 48,
             height: 48),
       ),
-      title: Text(token.blockchain.name, style: tt.titleMedium),
+      title: Text(widget.token.name, style: tt.titleMedium),
+      subtitle: Text(widget.token.blockchain.name,
+          style: tt.bodyMedium?.copyWith(color: cs.onSurface)),
       trailing: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Text(formatTokenAmount(amount: tokenAmount, token: token),
+            Text(formatTokenAmount(amount: tokenAmount, token: widget.token),
                 style: tt.titleMedium),
             const SizedBox(height: 2),
             Text(formatFiatAmount(amount: fiatAmount),

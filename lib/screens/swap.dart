@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'global.dart';
+import '/models/token.dart';
 
 class SwapScreen extends StatelessWidget {
   final Token? sourceToken;
@@ -35,7 +35,7 @@ class SwapScreen extends StatelessWidget {
   }
 }
 
-const defaultSourceToken = Token.toncoin;
+const defaultSourceToken = Token.ether;
 const defaultDestToken = Token.toncoinERC20;
 
 class SwapForm extends StatefulWidget {

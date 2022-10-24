@@ -1,9 +1,7 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
-import 'global.dart';
+import '/models/token.dart';
+import 'ui.dart';
 import 'swap.dart';
 
 class TokenScreen extends StatelessWidget {
@@ -43,28 +41,48 @@ class TokenScreen extends StatelessWidget {
   }
 }
 
-class Balance extends StatelessWidget {
+class Balance extends StatefulWidget {
   final Token token;
 
   const Balance({super.key, required this.token});
 
   @override
+  State<Balance> createState() => _BalanceState();
+}
+
+class _BalanceState extends State<Balance> {
+  TokenAmount tokenAmount = "0";
+  FiatAmount fiatAmount = "0";
+
+  @override
+  void initState() {
+    super.initState();
+    getAmounts();
+  }
+
+  void getAmounts() async {
+    var _tokenAmount = await getTokenAmount(widget.token);
+    setState(() {
+      tokenAmount = _tokenAmount;
+      fiatAmount = getFiatAmount(tokenAmount);
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     var cs = Theme.of(context).colorScheme;
     var tt = Theme.of(context).textTheme;
-    var tokenAmount = getTokenAmount(token);
-    var fiatAmount = getFiatAmount(tokenAmount);
     return Column(children: [
       ClipRRect(
         borderRadius: BorderRadius.circular(999),
         child: Image(
-            image: AssetImage(token.blockchain.imageUrl),
+            image: AssetImage(widget.token.blockchain.imageUrl),
             width: 64,
             height: 64),
       ),
       SizedBox(height: 8),
       Text(
-        formatTokenAmount(amount: tokenAmount, token: token),
+        formatTokenAmount(amount: tokenAmount, token: widget.token),
         style: tt.headlineMedium,
       ),
       SizedBox(height: 4),

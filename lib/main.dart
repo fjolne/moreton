@@ -1,13 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'home.dart';
 
-void main() {
-  runApp(const MyApp());
+import 'screens/create_wallet.dart';
+import 'screens/home.dart';
+import 'state.dart' as state;
+
+Future main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  var isNewUser = await state.init();
+
+  runApp(MyApp(isNewUser: isNewUser));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final bool isNewUser;
+  const MyApp({super.key, required this.isNewUser});
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +48,7 @@ class MyApp extends StatelessWidget {
             unselectedItemColor: cs.onSurface,
             backgroundColor: cs.surface,
           )),
-      home: const HomeScreen(),
+      home: isNewUser ? const CreateWallet() : const HomeScreen(),
     );
   }
 }
