@@ -3,12 +3,15 @@ import 'package:moreton/models/ethereum.dart';
 import 'package:moreton/models/ton.dart';
 import 'package:test/test.dart';
 import 'package:web3dart/web3dart.dart';
+import 'package:web3dart/src/crypto/formatting.dart' as formatting;
 
 final EthereumAddress contractAddr = EthereumAddress.fromHex(
   '0x5c901b3Bfb52cD94AE2A4d5c111aA48797a1896C',
 );
 const privateKey =
     '25b6431c25daea0c3daf39794b298cc14785717edc2de398f80ea5188a0eb5aa';
+// const address0 =
+//     '0x0000000000000000000000001e3f32759670fc150509dbc8956d12e9ca24696b';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,6 +26,18 @@ void main() {
         await getWTonBalance(client, privateKey, contractAddr),
         TonAmount.inTon(123),
       );
+    });
+
+    test("tx history", () async {
+      final events =
+          await getWTonTransferEvents(client, privateKey, contractAddr);
+      expect(events.length, 1);
+      expect(
+          events[0].from,
+          EthereumAddress.fromHex(
+              "0x0000000000000000000000000000000000000000"));
+      expect(events[0].to, EthPrivateKey.fromHex(privateKey).address);
+      expect(events[0].value, TonAmount.inTon(123));
     });
   });
 }
