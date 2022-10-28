@@ -73,7 +73,7 @@ class TonAmount {
 
   @override
   String toString() {
-    return 'TonAmount: $getInNano nanos';
+    return '$getInTon TON';
   }
 
   @override

@@ -109,3 +109,23 @@ class WTonTransferEvent {
 
   WTonTransferEvent(this.from, this.to, this.value, this.blockInfo);
 }
+
+class WTonTransactionList extends ChangeNotifier {
+  final List<WTonTransferEvent> txes = [];
+  final EthereumAddress addr;
+
+  WTonTransactionList(this.addr);
+
+  int get length => txes.length;
+
+  Future fetch() async {
+    print("addr=${addr}");
+    txes.clear();
+    txes.addAll(await getWTonTransferEvents(
+      getCachedClient(),
+      addr,
+      contractAddr,
+    ));
+    notifyListeners();
+  }
+}

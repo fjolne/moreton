@@ -1,5 +1,8 @@
-import 'ethereum.dart' as eth;
+import 'package:flutter_trust_wallet_core/flutter_trust_wallet_core.dart';
+import 'package:web3dart/web3dart.dart';
+
 import '/state.dart' as state;
+import 'ethereum.dart' as eth;
 
 enum Blockchain {
   ton(
@@ -37,12 +40,14 @@ enum Token {
     symbol: "ETH",
     decimals: 18,
     blockchain: Blockchain.ethereum,
+    getAddress: eth.getDefaultAddress,
   ),
   toncoinERC20(
     name: "Wrapped Toncoin",
     symbol: "WTON",
     decimals: 9,
     blockchain: Blockchain.ethereum,
+    getAddress: eth.getDefaultAddress,
   ),
   // toncoinBEP20(
   //   name: "Wrapped Toncoin",
@@ -55,12 +60,14 @@ enum Token {
   final String symbol;
   final int decimals;
   final Blockchain blockchain;
+  final EthereumAddress Function(HDWallet wallet) getAddress;
 
   const Token({
     required this.name,
     required this.symbol,
     required this.decimals,
     required this.blockchain,
+    required this.getAddress,
   });
 }
 

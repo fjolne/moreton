@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:moreton/models/ethereum.dart';
+import 'package:web3dart/web3dart.dart';
 
+import '/state.dart' as state;
 import '/models/token.dart';
 import 'ui.dart';
 import 'swap.dart';
@@ -24,15 +27,17 @@ class TokenScreen extends StatelessWidget {
       ),
       body: Container(
         color: cs.background,
-        padding: EdgeInsets.symmetric(vertical: 24),
+        padding: const EdgeInsets.symmetric(vertical: 24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             Balance(token: token),
-            SizedBox(height: 24),
+            const SizedBox(height: 24),
             Actions(token: token),
-            SizedBox(height: 24),
-            TransactionList(),
+            const SizedBox(height: 24),
+            Expanded(
+                child:
+                    TransactionList(address: token.getAddress(state.wallet))),
           ],
         ),
       ),
@@ -57,14 +62,14 @@ class _BalanceState extends State<Balance> {
   @override
   void initState() {
     super.initState();
+    fiatAmount = getFiatAmount(tokenAmount);
     getAmounts();
   }
 
   void getAmounts() async {
-    var _tokenAmount = await getTokenAmount(widget.token);
+    var tokenAmount = await getTokenAmount(widget.token);
     setState(() {
-      tokenAmount = _tokenAmount;
-      fiatAmount = getFiatAmount(tokenAmount);
+      this.tokenAmount = tokenAmount;
     });
   }
 
@@ -80,12 +85,12 @@ class _BalanceState extends State<Balance> {
             width: 64,
             height: 64),
       ),
-      SizedBox(height: 8),
+      const SizedBox(height: 8),
       Text(
         formatTokenAmount(amount: tokenAmount, token: widget.token),
         style: tt.headlineMedium,
       ),
-      SizedBox(height: 4),
+      const SizedBox(height: 4),
       Text("≈ $fiatAmount", style: tt.bodyLarge?.copyWith(color: cs.secondary)),
     ]);
   }
@@ -123,11 +128,49 @@ class Actions extends StatelessWidget {
   }
 }
 
-class TransactionList extends StatelessWidget {
-  const TransactionList({super.key});
+class TransactionList extends StatefulWidget {
+  final EthereumAddress address;
+
+  const TransactionList({super.key, required this.address});
+
+  @override
+  State<TransactionList> createState() => _TransactionListState();
+}
+
+class _TransactionListState extends State<TransactionList> {
+  late WTonTransactionList transactionList;
+
+  @override
+  void initState() {
+    super.initState();
+    transactionList = WTonTransactionList(widget.address);
+    initStateAsync();
+  }
+
+  Future initStateAsync() async {
+    await transactionList.fetch();
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Container();
+    var cs = Theme.of(context).colorScheme;
+    var tt = Theme.of(context).textTheme;
+    return ListView.builder(
+      itemCount: transactionList.length,
+      itemBuilder: (context, index) {
+        var tx = transactionList.txes[index];
+        var srcDest = widget.address == tx.from
+            ? ['To', tx.to.hexEip55]
+            : ['From', tx.from.hexEip55];
+        return ListTile(
+          leading: const Icon(Icons.arrow_downward),
+          title: const Text("Transfer"),
+          subtitle: Text("${srcDest[0]}: ${srcDest[1]}",
+              style: tt.bodySmall?.copyWith(color: cs.onSurface)),
+          trailing: Text(tx.value.toString(), style: tt.titleMedium),
+        );
+      },
+    );
   }
 }
