@@ -7,6 +7,10 @@ import 'package:web3dart/src/crypto/formatting.dart' as formatting;
 
 final EthereumAddress addr =
     EthereumAddress.fromHex("0x1E3F32759670fC150509dbc8956D12e9cA24696b");
+final EthereumAddress receiver =
+    EthereumAddress.fromHex("0xC6c237319F79194DCC0E2aeBd6206d83d4C7BA0B");
+final Credentials creds = EthPrivateKey.fromHex(
+    "0x25b6431c25daea0c3daf39794b298cc14785717edc2de398f80ea5188a0eb5aa");
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,6 +36,25 @@ void main() {
               "0x0000000000000000000000000000000000000000"));
       expect(events[0].to, addr);
       expect(events[0].value, TonAmount.inTon(123));
+    });
+
+    test("transfer", () async {
+      final balanceBefore = await getWTonBalance(client, addr, contractAddr);
+      final balanceReceiverBefore =
+          await getWTonBalance(client, receiver, contractAddr);
+      final BigInt value = BigInt.from(5);
+      await transferWTon(
+          client: client,
+          credentials: creds,
+          contractAddr: contractAddr,
+          receiver: receiver,
+          value: TonAmount.inTon(value));
+      final balanceAfter = await getWTonBalance(client, addr, contractAddr);
+      final balanceReceiverAfter =
+          await getWTonBalance(client, receiver, contractAddr);
+      expect(balanceAfter.getInTon, balanceBefore.getInTon - value);
+      expect(balanceReceiverAfter.getInTon,
+          balanceReceiverBefore.getInTon + value);
     });
   });
 }

@@ -85,6 +85,26 @@ Future<List<WTonTransferEvent>> getWTonTransferEvents(Web3Client client,
   return events;
 }
 
+Future transferWTon({
+  required Web3Client client,
+  required Credentials credentials,
+  required EthereumAddress contractAddr,
+  required EthereumAddress receiver,
+  required TonAmount value,
+}) async {
+  final contract =
+      await getContract("assets/eth_wton_abi.json", "Bridge", contractAddr);
+  final sendFunction = contract.function('transfer');
+  await client.sendTransaction(
+    credentials,
+    Transaction.callContract(
+      contract: contract,
+      function: sendFunction,
+      parameters: [receiver, value.getInNano],
+    ),
+  );
+}
+
 String paddedAddress(String hex) => formatting.bytesToHex(
       formatting.hexToBytes(hex),
       include0x: true,
