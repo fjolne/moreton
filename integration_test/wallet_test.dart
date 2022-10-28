@@ -8,7 +8,8 @@ const mnemonic =
     "want region shallow update slight arrive notable news alert canyon candy art";
 const privateKey =
     '25b6431c25daea0c3daf39794b298cc14785717edc2de398f80ea5188a0eb5aa';
-const defaultAddress = "0x1E3F32759670fC150509dbc8956D12e9cA24696b";
+final EthereumAddress addr =
+    EthereumAddress.fromHex("0x1E3F32759670fC150509dbc8956D12e9cA24696b");
 
 void main() {
   late final HDWallet wallet;
@@ -29,7 +30,7 @@ void main() {
 
     test("address derivation", () {
       final credentials = EthPrivateKey.fromHex(privateKey);
-      expect(credentials.address, EthereumAddress.fromHex(defaultAddress));
+      expect(credentials.address, addr);
     });
   });
 

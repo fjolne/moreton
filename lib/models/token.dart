@@ -84,7 +84,7 @@ Future<TokenAmount> getTokenAmount(Token t) async {
     case Token.toncoinERC20:
       var wton = await eth.getWTonBalance(
         eth.getCachedClient(),
-        eth.getDefaultPrivateKey(state.wallet),
+        eth.getDefaultAddress(state.wallet),
         eth.contractAddr,
       );
       return wton.getInTon.toString();

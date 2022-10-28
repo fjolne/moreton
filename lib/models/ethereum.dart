@@ -28,6 +28,11 @@ String getDefaultPrivateKey(HDWallet wallet) {
   return hex.encode(wallet.getKeyForCoin(60).data());
 }
 
+EthereumAddress getDefaultAddress(HDWallet wallet) {
+  return EthereumAddress.fromHex(
+      wallet.getAddressForCoin(TWCoinType.TWCoinTypeEthereum));
+}
+
 Future<EtherAmount> getEtherBalance(
     Web3Client client, String privateKey) async {
   final creds = EthPrivateKey.fromHex(privateKey);
@@ -42,36 +47,25 @@ Future<DeployedContract> getContract(
   return contract;
 }
 
-Future<TonAmount> getWTonBalance(
-    Web3Client client, String privateKey, EthereumAddress contractAddr) async {
-  final creds = EthPrivateKey.fromHex(privateKey);
+Future<TonAmount> getWTonBalance(Web3Client client, EthereumAddress addr,
+    EthereumAddress contractAddr) async {
   final contract =
       await getContract("assets/eth_wton_abi.json", "Bridge", contractAddr);
   final balanceFunction = contract.function('balanceOf');
-  final balanceResp = await client.call(
-      contract: contract, function: balanceFunction, params: [creds.address]);
+  final balanceResp = await client
+      .call(contract: contract, function: balanceFunction, params: [addr]);
   final amount = balanceResp.first as BigInt;
   return TonAmount.inNano(amount);
 }
 
-class WTonTransferEvent {
-  final EthereumAddress from;
-  final EthereumAddress to;
-  final TonAmount value;
-  final BlockInformation blockInfo;
-
-  WTonTransferEvent(this.from, this.to, this.value, this.blockInfo);
-}
-
-Future<List<WTonTransferEvent>> getWTonTransferEvents(
-    Web3Client client, String privateKey, EthereumAddress contractAddr) async {
-  final creds = EthPrivateKey.fromHex(privateKey);
+Future<List<WTonTransferEvent>> getWTonTransferEvents(Web3Client client,
+    EthereumAddress addr, EthereumAddress contractAddr) async {
   final contract =
       await getContract("assets/eth_wton_abi.json", "Bridge", contractAddr);
   final transferEvent = contract.event('Transfer');
   final filter = FilterOptions(
     address: contractAddr,
-    topics: contractTopics(transferEvent, creds),
+    topics: contractTopics(transferEvent, addr),
   );
   final logs = await client.getLogs(filter);
   final events = <WTonTransferEvent>[];
@@ -97,11 +91,21 @@ String paddedAddress(String hex) => formatting.bytesToHex(
       forcePadLength: 64,
     );
 
-List<List<String>> contractTopics(ContractEvent event, EthPrivateKey creds) => [
+List<List<String>> contractTopics(ContractEvent event, EthereumAddress addr) =>
+    [
       [
         formatting.bytesToHex(event.signature,
             include0x: true, forcePadLength: 64)
       ],
       [],
-      [paddedAddress(creds.address.hex)],
+      [paddedAddress(addr.hex)],
     ];
+
+class WTonTransferEvent {
+  final EthereumAddress from;
+  final EthereumAddress to;
+  final TonAmount value;
+  final BlockInformation blockInfo;
+
+  WTonTransferEvent(this.from, this.to, this.value, this.blockInfo);
+}
