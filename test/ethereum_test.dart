@@ -6,7 +6,7 @@ import 'package:web3dart/web3dart.dart';
 import 'package:web3dart/src/crypto/formatting.dart' as formatting;
 
 final EthereumAddress contractAddr = EthereumAddress.fromHex(
-  '0x5c901b3Bfb52cD94AE2A4d5c111aA48797a1896C',
+  '0x8fCF1054672573B6Fa5c380Da331c6524222414d',
 );
 const privateKey =
     '25b6431c25daea0c3daf39794b298cc14785717edc2de398f80ea5188a0eb5aa';

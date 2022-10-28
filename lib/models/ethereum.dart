@@ -1,14 +1,17 @@
-import 'package:http/http.dart';
 import 'package:convert/convert.dart' show hex;
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_trust_wallet_core/flutter_trust_wallet_core.dart';
-import 'package:web3dart/web3dart.dart';
+import 'package:flutter_trust_wallet_core/trust_wallet_core_ffi.dart';
+import 'package:http/http.dart';
 import 'package:web3dart/src/crypto/formatting.dart' as formatting;
+import 'package:web3dart/web3dart.dart';
+
 import '/util.dart' as util;
 import 'ton.dart';
 
-const rpcUrl = "http://192.168.1.70:7545";
+const rpcUrl = "http://192.168.1.70:8545";
 final EthereumAddress contractAddr = EthereumAddress.fromHex(
-  '0x5c901b3Bfb52cD94AE2A4d5c111aA48797a1896C',
+  '0x8fCF1054672573B6Fa5c380Da331c6524222414d',
 );
 
 Web3Client? _cachedClient;
