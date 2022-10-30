@@ -1,8 +1,10 @@
+import 'package:collection/collection.dart';
 import 'package:convert/convert.dart' show hex;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_trust_wallet_core/flutter_trust_wallet_core.dart';
 import 'package:flutter_trust_wallet_core/trust_wallet_core_ffi.dart';
 import 'package:http/http.dart';
+// ignore: implementation_imports
 import 'package:web3dart/src/crypto/formatting.dart' as formatting;
 import 'package:web3dart/web3dart.dart';
 
@@ -63,11 +65,28 @@ Future<List<WTonTransferEvent>> getWTonTransferEvents(Web3Client client,
   final contract =
       await getContract("assets/eth_wton_abi.json", "Bridge", contractAddr);
   final transferEvent = contract.event('Transfer');
-  final filter = FilterOptions(
-    address: contractAddr,
-    topics: contractTopics(transferEvent, addr),
-  );
-  final logs = await client.getLogs(filter);
+  FilterOptions makeFilter(List<List<String>> topics) => FilterOptions(
+        fromBlock: const BlockNum.genesis(),
+        toBlock: const BlockNum.current(),
+        address: contractAddr,
+        topics: topics,
+      );
+  final logs = [
+    ...await client.getLogs(makeFilter(
+      [
+        ...contractTopics(transferEvent),
+        [],
+        [paddedAddress(addr.hex)],
+      ],
+    )),
+    ...await client.getLogs(makeFilter(
+      [
+        ...contractTopics(transferEvent),
+        [paddedAddress(addr.hex)],
+        [],
+      ],
+    ))
+  ];
   final events = <WTonTransferEvent>[];
   for (var event in logs) {
     final decoded =
@@ -82,7 +101,10 @@ Future<List<WTonTransferEvent>> getWTonTransferEvents(Web3Client client,
 
     events.add(WTonTransferEvent(from, to, TonAmount.inNano(value), blockInfo));
   }
-  return events;
+
+  var orderedEvents =
+      events.sortedBy((e) => e.blockInfo.timestamp).reversed.toList();
+  return orderedEvents;
 }
 
 Future transferWTon({
@@ -111,14 +133,11 @@ String paddedAddress(String hex) => formatting.bytesToHex(
       forcePadLength: 64,
     );
 
-List<List<String>> contractTopics(ContractEvent event, EthereumAddress addr) =>
-    [
+List<List<String>> contractTopics(ContractEvent event) => [
       [
         formatting.bytesToHex(event.signature,
             include0x: true, forcePadLength: 64)
       ],
-      [],
-      [paddedAddress(addr.hex)],
     ];
 
 class WTonTransferEvent {
@@ -128,6 +147,9 @@ class WTonTransferEvent {
   final BlockInformation blockInfo;
 
   WTonTransferEvent(this.from, this.to, this.value, this.blockInfo);
+
+  @override
+  toString() => "from=$from to=$to value=$value";
 }
 
 class WTonTransactionList extends ChangeNotifier {
@@ -139,7 +161,6 @@ class WTonTransactionList extends ChangeNotifier {
   int get length => txes.length;
 
   Future fetch() async {
-    print("addr=${addr}");
     txes.clear();
     txes.addAll(await getWTonTransferEvents(
       getCachedClient(),

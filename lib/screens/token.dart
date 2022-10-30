@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:grouped_list/grouped_list.dart';
 import 'package:moreton/models/ethereum.dart';
 import 'package:web3dart/web3dart.dart';
 
@@ -156,15 +157,21 @@ class _TransactionListState extends State<TransactionList> {
   Widget build(BuildContext context) {
     var cs = Theme.of(context).colorScheme;
     var tt = Theme.of(context).textTheme;
-    return ListView.builder(
-      itemCount: transactionList.length,
-      itemBuilder: (context, index) {
-        var tx = transactionList.txes[index];
+    return GroupedListView(
+      order: GroupedListOrder.DESC,
+      elements: transactionList.txes,
+      groupBy: (tx) => txDayFormatter.format(tx.blockInfo.timestamp),
+      groupHeaderBuilder: (tx) => Container(
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+        color: cs.surface,
+        child: Text(txDayFormatter.format(tx.blockInfo.timestamp)),
+      ),
+      itemBuilder: (context, tx) {
         var srcDest = widget.address == tx.from
-            ? ['To', tx.to.hexEip55]
-            : ['From', tx.from.hexEip55];
+            ? ['To', compressAddress(tx.to.hexEip55), Icons.arrow_upward]
+            : ['From', compressAddress(tx.from.hexEip55), Icons.arrow_downward];
         return ListTile(
-          leading: const Icon(Icons.arrow_downward),
+          leading: Icon(srcDest[2] as IconData, color: cs.onSurface),
           title: const Text("Transfer"),
           subtitle: Text("${srcDest[0]}: ${srcDest[1]}",
               style: tt.bodySmall?.copyWith(color: cs.onSurface)),

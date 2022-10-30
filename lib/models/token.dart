@@ -1,4 +1,5 @@
 import 'package:flutter_trust_wallet_core/flutter_trust_wallet_core.dart';
+import 'package:intl/intl.dart';
 import 'package:web3dart/web3dart.dart';
 
 import '/state.dart' as state;
@@ -101,3 +102,8 @@ Future<TokenAmount> getTokenAmount(Token t) async {
 FiatAmount getFiatAmount(Object tokenAmount) {
   return "0";
 }
+
+String compressAddress(String hex) =>
+    "${hex.substring(0, 7)}...${hex.substring(hex.length - 7, hex.length)}";
+
+final txDayFormatter = DateFormat("MMM dd yyyy");
